@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>CSS 动画测试 -- transition left top</title>
+
+    <style>
+        #main {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 820px;
+            height: 520px;
+            border: 1px solid grey;
+        }
+        div.animate {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+
+            -webkit-animation-name: anim01;
+            -webkit-animation-duration: 2s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: linear;
+        }
+
+        #btnCnt {
+            position: absolute;
+            top: 10px;
+            left: 850px;
+        }
+        #btnCnt button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        #prompt {
+            display: none;
+        }
+        #link {
+            position: absolute;
+            top: 200px;
+            left: 850px;
+        }
+        #link a {
+            display: block;
+        }
+
+        @-webkit-keyframes anim01 {
+            0%   {-webkit-transform:translate(10px, 10px);}
+            100% {-webkit-transform:translate(500px, 500px);}
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="main">
+</div>
+<div id="btnCnt">
+    <button id="clear">Clear</button>
+    <button id="add10">加10</button>
+    <button id="add100">加100</button>
+    <button id="block">阻塞2秒</button>
+    <h1 id="prompt">阻塞中......</h1>
+</div>
+<div id="link">
+    <a href="js-interval.html">例子一：JS定时方式(js-interval)</a>
+    <a href="transition.html">例子二：transition方式</a>
+    <a href="transition-transform.html">例子三：transition + transform方式</a>
+    <a href="transition-transform3d.html">例子四：transition + transform3d方式</a>
+    <a href="animation.html">例子五：animation + transform3d方式</a>
+</div>
+
+<script src="js/jquery-1.11.0.js"></script>
+<script>
+    $(document).ready(function() {
+        addNDiv(1);
+        $("#clear").click(function() {
+            $("#main div").remove();
+        });
+        $("#add10").click(function() {
+            addNDiv(10);
+        });
+        $("#add100").click(function() {
+            addNDiv(100);
+        });
+        $("#block").click(function() {
+            $("#prompt").show();
+            setTimeout(function() {
+                var begin = new Date().getTime();
+                while (new Date().getTime() - begin <= 2000) {
+                }
+                $("#prompt").hide();
+            }, 15);
+        });
+    });
+
+    function addNDiv(n) {
+        var timer = null;
+        var $container = $("#main");
+        var i = 0;
+        var timer = setInterval(function() {
+            addOneDiv($container);
+            i++;
+            if (i >= n) {
+                if (timer) {
+                    clearInterval(timer);
+                }
+            }
+        }, 20);
+    }
+
+    function addOneDiv($container) {
+
+        var $div = $("<div></div>").addClass("animate").css({
+            "position": "absolute",
+            "top": 0 + "px",
+            "left": 0 + "px",
+            "background-color": '#' + Math.floor(Math.random()*16777215).toString(16)
+        }).appendTo($container);
+
+        updateAnimateRule();
+    }
+
+    function updateAnimateRule() {
+        var beginX = Math.floor(Math.random() * 800 + 1) + "px";
+        var endX = Math.floor(Math.random() * 800 + 1) + "px";
+        var beginY = Math.floor(Math.random() * 500 + 1) + "px";
+        var endY = Math.floor(Math.random() * 500 + 1) + "px";
+
+        var beginStr = "0% {-webkit-transform:translate3d(" + beginX + ", " + beginY + ", 0px);}";
+        var endStr = "100% {-webkit-transform:translate3d(" + endX + ", " + endY + ", 0px);}";
+
+        var keyframesRule = document.styleSheets[0].cssRules[7];
+        keyframesRule.deleteRule("0%");
+        keyframesRule.deleteRule("100%");
+        keyframesRule.insertRule(beginStr);
+        keyframesRule.insertRule(endStr);
+    }
+
+</script>
+</body>
+</html>

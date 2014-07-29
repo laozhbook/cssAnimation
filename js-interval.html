@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>CSS 动画测试 -- jquery animate</title>
+
+<style>
+#main {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 820px;
+    height: 520px;
+    border: 1px solid grey;
+}
+div.animate {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+}
+
+#btnCnt {
+    position: absolute;
+    top: 10px;
+    left: 850px;
+}
+#btnCnt button {
+    display: block;
+    margin-bottom: 10px;
+}
+#prompt {
+    display: none;
+}
+
+#link {
+    position: absolute;
+    top: 200px;
+    left: 850px;
+}
+#link a {
+    display: block;
+}
+</style>
+</head>
+<body>
+<!-- http://www.phpied.com/css-animations-off-the-ui-thread/ -->
+<!-- https://developer.mozilla.org/zh-CN/docs/CSS/Tutorials/Using_CSS_transitions -->
+
+<div id="main">
+</div>
+<div id="btnCnt">
+    <button id="clear">Clear</button>
+    <button id="add10">加10</button>
+    <button id="add100">加100</button>
+    <button id="block">阻塞2秒</button>
+    <h1 id="prompt">阻塞中......</h1>
+</div>
+<div id="link">
+    <a href="js-interval.html">例子一：JS定时方式(js-interval)</a>
+    <a href="transition.html">例子二：transition方式</a>
+    <a href="transition-transform.html">例子三：transition + transform方式</a>
+    <a href="transition-transform3d.html">例子四：transition + transform3d方式</a>
+    <a href="animation.html">例子五：animation + transform3d方式</a>
+</div>
+
+<script src="js/jquery-1.11.0.js"></script>
+<script>
+$(document).ready(function() {
+    addNDiv(1);
+    $("#clear").click(function() {
+        $("#main div").remove();
+    });
+    $("#add10").click(function() {
+        addNDiv(10);
+    });
+    $("#add100").click(function() {
+        addNDiv(100);
+    });
+    $("#block").click(function() {
+        $("#prompt").show();
+        setTimeout(function() {
+            var begin = new Date().getTime();
+            while (new Date().getTime() - begin <= 2000) {
+            }
+            $("#prompt").hide();
+        }, 15);
+    });
+});
+
+function addNDiv(n) {
+    var $container = $("#main");
+    var i = 0;
+    while (i < n) {
+        addOneDiv($container);
+        i++;
+    }
+}
+
+function addOneDiv($container) {
+    var mainHeight = 500,
+        mainWidth = 800,
+        top = Math.floor(Math.random() * mainHeight + 1),
+        left = Math.floor(Math.random() * mainWidth + 1);
+
+    var $div = $("<div></div>").addClass("animate").css({
+        "top": top + "px",
+        "left": left + "px",
+        "background-color": '#' + Math.floor(Math.random()*16777215).toString(16)
+    }).appendTo($container);
+
+    var backX = left > (mainWidth / 2) ? -1 : 1;
+    var absX = backX < 0 ? (mainWidth - left) : left;
+    var tx = Math.floor(Math.random() * absX + 1) * backX;
+
+    var backY = top > (mainHeight / 2) ? -1 : 1;
+    var absY = backY < 0 ? (mainHeight - top) : top;
+    var ty = Math.floor(Math.random() * absY + 1) * backY;
+
+    animateDom($div, tx, ty, Math.floor(Math.random() * 2000 + 500));
+}
+
+function animateDom($dom, x, y, speed) {
+    $dom.
+    animate(
+        { "left": "+=" + x + "px", "top": "+=" + y + "px" }, speed, "swing"
+    ).
+    animate(
+        { "left": "-=" + x + "px", "top": "-=" + y + "px" },
+        speed,
+        "swing",
+        function() {
+            animateDom($(this), x, y, speed);
+        }
+    );
+}
+</script>
+</body>
+</html>
